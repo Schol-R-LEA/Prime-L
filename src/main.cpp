@@ -1,9 +1,6 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <streambuf>
-#include <ios>
-#include <typeinfo>
 #include "atom.h"
 #include "read.h"
 
