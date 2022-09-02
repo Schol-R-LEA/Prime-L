@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "atom.h"
 #include "read.h"
 
@@ -18,9 +19,12 @@ int main(int argc, char* argv[])
     std::ifstream src_file;
     src_file.open(src_filename);
     std::ofstream dest_file;
-    dest_file.open(dest_filename);
 
-    Atom* expression = read_expression(src_file);
+    std::stringstream src;
+
+    read_src_file(src, src_file);
+
+    Atom* expression = read_expression(src);
     dest_file << expression->to_string() << std::endl;
 
     delete expression;

@@ -23,6 +23,11 @@ std::string to_string_list_helper(Pair *p)
 
     std::string midpoint = " . ";
 
+    if (p == nullptr)
+    {
+        return "";
+    }
+
     if (p->get_car() == nullptr)
     {
         if (p->get_cdr() == nullptr)
@@ -43,8 +48,7 @@ std::string to_string_list_helper(Pair *p)
         if (typeid(*(p->get_cdr())) == typeid(Pair))
         {
             return p->get_car()->to_string()
-                   + ((p->get_cdr() != nullptr) ? " " : "")
-                   + to_string_list_helper(dynamic_cast<Pair *>(p->get_cdr()));
+                   + " " + to_string_list_helper(dynamic_cast<Pair *>(p->get_cdr()));
         }
         else
         {

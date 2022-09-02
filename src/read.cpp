@@ -2,14 +2,23 @@
 #include <ios>
 #include <iostream>
 #include <string>
-#include <iostream>
-#include <streambuf>
+#include <sstream>
 #include <typeinfo>
 #include "atom.h"
 #include "read.h"
 
 
-Atom* read_expression(std::ifstream& src)
+void read_src_file(std::stringstream& src, std::ifstream& src_file)
+{
+    while (src_file)
+    {
+        src << src_file.rdbuf();
+    }
+}
+
+
+
+Atom* read_expression(std::stringstream& src)
 {
     if (src.eof())
     {
@@ -46,7 +55,7 @@ Atom* read_expression(std::ifstream& src)
 }
 
 
-Atom* read_list(std::ifstream& src)
+Atom* read_list(std::stringstream& src)
 {
     Atom* head = read_expression(src);
 
@@ -78,7 +87,7 @@ Atom* read_list(std::ifstream& src)
 
 
 
-Atom* read_symbol(char start_ch, std::ifstream& src)
+Atom* read_symbol(char start_ch, std::stringstream& src)
 {
     char ch = start_ch;
     std::string ostr = "";
@@ -99,7 +108,7 @@ Atom* read_symbol(char start_ch, std::ifstream& src)
 
 
 
-Atom* read_number(char start_ch, std::ifstream& src)
+Atom* read_number(char start_ch, std::stringstream& src)
 {
     char ch = start_ch;
     std::string ostr = "";
