@@ -22,6 +22,7 @@ private:
 
 public:
     Symbol(std::string s): literal(s) {};
+    std::string value() {return literal;};
     virtual std::string to_string() {return literal;};
 };
 
@@ -58,6 +59,7 @@ private:
     long long literal;
 public:
     Integer64(long long i): literal(i) {};
+    long long value() {return literal;};
     virtual std::string to_string() {return std::to_string(literal);};
 };
 
@@ -68,6 +70,7 @@ private:
     double literal;
 public:
     FP_Double(double i): literal(i) {};
+    double value() {return literal;};
     virtual std::string to_string() {return std::to_string(literal);};
 };
 

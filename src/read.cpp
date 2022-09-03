@@ -59,9 +59,14 @@ Atom* read_list(std::stringstream& src)
 {
     Atom* head = read_expression(src);
 
+    if (head == nullptr)
+    {
+        return nullptr;
+    }
+
     if(typeid(*head) == typeid(RightParen))
     {
-        return new Pair();
+        return nullptr;
     }
 
     Atom* tail = read_expression(src);
@@ -74,15 +79,10 @@ Atom* read_list(std::stringstream& src)
     {
         return new Pair(head);
     }
-    else if(typeid(*tail) == typeid(Pair))
-    {
-        return new Pair(head, new Pair(tail, read_list(src)));
-    }
     else
     {
         return new Pair(head, new Pair(tail, read_list(src)));
     }
-
 }
 
 
