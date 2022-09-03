@@ -135,6 +135,10 @@ TEST_SUITE("constructing atoms and lists")
         CHECK(typeid(*test_cadr) == typeid(Symbol));
         Symbol* test_symbol = dynamic_cast<Symbol*>(test_cadr);
         CHECK(test_symbol->value() == "bar");
+        Atom* test_cddr = test_cdr->get_cdr();
+        test_symbol = dynamic_cast<Symbol*>(test_cddr);
+        CHECK(typeid(*test_cddr) == typeid(Symbol));
+        CHECK(test_symbol->value() == "baz");
         CHECK(test->to_string() == "(foo bar . baz)");
         delete test;
     }
@@ -211,7 +215,7 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         CHECK(test == nullptr);
         delete test;
     }
-    
+
     TEST_CASE("list of one element")
     {
         std::stringstream src;
@@ -230,7 +234,6 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         delete test;
     }
 
-
     TEST_CASE("proper list of two integer elements with extra spaces")
     {
         std::stringstream src;
@@ -239,7 +242,6 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         CHECK(test->to_string() == "(23 42)");
         delete test;
     }
-
 
     TEST_CASE("proper list of two elements with extra spaces")
     {
@@ -284,6 +286,11 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         CHECK(typeid(*test_cadr) == typeid(Symbol));
         Symbol* test_symbol = dynamic_cast<Symbol*>(test_cadr);
         CHECK(test_symbol->value() == "bar");
+        Atom* test_cddr = test_cdr->get_cdr();
+        std::cout << typeid(*test_cddr).name() << std::endl;
+        CHECK(typeid(*test_cddr) == typeid(Symbol));
+        test_symbol = dynamic_cast<Symbol*>(test_cddr);
+        //CHECK(test_symbol->value() == "quux");
         CHECK(test->to_string() == "(foo bar . quux)");
         delete test;
     }

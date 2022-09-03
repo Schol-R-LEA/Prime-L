@@ -22,6 +22,13 @@ public:
 };
 
 
+class malformed_improper_list_exception
+{
+public:
+    malformed_improper_list_exception() {};
+};
+
+
 void read_src_file(std::stringstream& src, std::ifstream& src_file);
 
 Atom* read_expression(std::stringstream& src);

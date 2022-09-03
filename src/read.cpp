@@ -64,7 +64,7 @@ Atom* read_list(std::stringstream& src)
         return nullptr;
     }
 
-    if(typeid(*head) == typeid(RightParen))
+    if (typeid(*head) == typeid(RightParen))
     {
         return nullptr;
     }
@@ -73,9 +73,16 @@ Atom* read_list(std::stringstream& src)
 
     if (typeid(*tail) == typeid(Dot))
     {
-        return new Pair(head, read_expression(src));
+        auto last = read_expression(src);
+        Pair* temp = new Pair(head, last);
+        auto next = read_expression(src);
+        if (typeid(*next) != typeid(RightParen))
+        {
+            throw new malformed_improper_list_exception();
+        }
+        return temp;
     }
-    else if(typeid(*tail) == typeid(RightParen))
+    else if (typeid(*tail) == typeid(RightParen))
     {
         return new Pair(head);
     }
@@ -97,7 +104,7 @@ Atom* read_symbol(char start_ch, std::stringstream& src)
         ostr += ch;
         char temp = src.peek();
 
-        if (std::iswspace(temp) || temp == '(' || temp == ')')
+        if (std::iswspace(temp) || temp == '.' || temp == '(' || temp == ')')
         {
             break;
         }
