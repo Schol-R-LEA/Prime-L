@@ -68,6 +68,17 @@ Atom* read_list(std::stringstream& src)
     {
         return nullptr;
     }
+    else if (typeid(*head) == typeid(Dot))
+    {
+        auto last = read_expression(src);
+        // sanity check - is the next token a right parenthesis?
+        auto next = read_expression(src);
+        if (typeid(*next) != typeid(RightParen))
+        {
+            throw new malformed_improper_list_exception();
+        }
+        return last;
+    }
 
     Atom* tail = read_expression(src);
 
@@ -75,6 +86,7 @@ Atom* read_list(std::stringstream& src)
     {
         auto last = read_expression(src);
         Pair* temp = new Pair(head, last);
+        // sanity check - is the next token a right parenthesis?
         auto next = read_expression(src);
         if (typeid(*next) != typeid(RightParen))
         {
@@ -82,7 +94,7 @@ Atom* read_list(std::stringstream& src)
         }
         return temp;
     }
-    else if (typeid(*tail) == typeid(RightParen))
+    if (typeid(*tail) == typeid(RightParen))
     {
         return new Pair(head);
     }

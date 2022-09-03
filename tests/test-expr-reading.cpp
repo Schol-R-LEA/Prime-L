@@ -287,13 +287,20 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         Symbol* test_symbol = dynamic_cast<Symbol*>(test_cadr);
         CHECK(test_symbol->value() == "bar");
         Atom* test_cddr = test_cdr->get_cdr();
-        std::cout << typeid(*test_cddr).name() << std::endl;
         CHECK(typeid(*test_cddr) == typeid(Symbol));
         test_symbol = dynamic_cast<Symbol*>(test_cddr);
         //CHECK(test_symbol->value() == "quux");
         CHECK(test->to_string() == "(foo bar . quux)");
         delete test;
     }
+
+    TEST_CASE("malformed improper list")
+    {
+        std::stringstream src;
+        src << "(foo bar . baz quux)";
+        REQUIRE_THROWS(read_expression(src));
+    }
+
 
     TEST_CASE("list of a symbol and a list")
     {
