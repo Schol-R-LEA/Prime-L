@@ -51,19 +51,25 @@ std::string to_string_list_helper(Pair *p)
         }
         else if (typeid(*cddr) == typeid(Pair))
         {
-            Pair* cddr_pair = dynamic_cast<Pair*>(cddr);
-            return car->to_string()
-                   + " " + cadr->to_string()
-                   + " " + to_string_list_helper(cddr_pair);
+            if (typeid(*car) == typeid(Pair))
+            {
+                return car->to_string()
+                    + " . " + cdr->to_string();
+            }
+            else
+            {
+                Pair* cddr_pair = dynamic_cast<Pair*>(cddr);
+                return car->to_string()
+                    + " " + cadr->to_string()
+                    + " " + to_string_list_helper(cddr_pair);
+            }
         }
         else
         {
             if (typeid(*car) == typeid(Pair))
             {
                 return car->to_string()
-                    + " . (" + cadr->to_string()
-                    + " . "
-                    + cddr->to_string() + ")";
+                    + " . " + cdr->to_string();
             }
             else
             {
