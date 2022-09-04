@@ -58,11 +58,20 @@ std::string to_string_list_helper(Pair *p)
         }
         else
         {
-            
-            return car->to_string()
-                   + " . (" + cadr->to_string()
-                   + " . "
-                   + cddr->to_string() + ")";
+            if (typeid(*car) == typeid(Pair))
+            {
+                return car->to_string()
+                    + " . (" + cadr->to_string()
+                    + " . "
+                    + cddr->to_string() + ")";
+            }
+            else
+            {
+                return car->to_string()
+                    + " " + cadr->to_string()
+                    + " . "
+                    + cddr->to_string();
+            }
         }
     }
     else
