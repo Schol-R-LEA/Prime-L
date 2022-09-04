@@ -158,6 +158,14 @@ TEST_SUITE("constructing atoms and lists")
         CHECK(test->to_string() == "(foo (bar baz))");
         delete test;
     }
+
+    TEST_CASE("binary tree of ordered pairs")
+    {
+        Pair* test = new Pair(new Pair(new Symbol("foo"), new Symbol("quux")), new Pair(new Symbol("bar"), new Symbol("baz")));
+        CHECK(test->to_string() == "((foo . quux) . (bar . baz))");
+        delete test;
+    }
+
 }
 
 TEST_SUITE("reading s-expressions and converting them to strings")
@@ -308,6 +316,15 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         src << "(foo (bar baz))";
         Atom* test = read_expression(src);
         CHECK(test->to_string() == "(foo (bar baz))");
+        delete test;
+    }
+
+    TEST_CASE("binary tree of ordered pairs")
+    {
+        std::stringstream src;
+        src << "((foo . quux) . (bar . baz))";
+        Atom* test = read_expression(src);
+        CHECK(test->to_string() == "((foo . quux) . (bar . baz))");
         delete test;
     }
 

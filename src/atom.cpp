@@ -20,41 +20,54 @@ Pair::~Pair()
 
 std::string to_string_list_helper(Pair *p)
 {
-
-    std::string midpoint = " . ";
-
     if (p == nullptr)
     {
         return "";
     }
+    Atom *car = p->get_car(), *cdr = p->get_cdr();
 
-    if (p->get_car() == nullptr)
+    if (car == nullptr)
     {
-        if (p->get_cdr() == nullptr)
+        if (cdr == nullptr)
         {
             return "";
         }
         else
         {
-            return "()" + midpoint + p->get_cdr()->to_string();
+            return "() . " + cdr->to_string();
         }
     }
-    else if (p->get_cdr() == nullptr)
+    else if (cdr == nullptr)
     {
-        return p->get_car()->to_string();
+        return car->to_string();
     }
-    else
+    else if (typeid(*cdr) == typeid(Pair))
     {
-        if (typeid(*(p->get_cdr())) == typeid(Pair))
+        Pair* cdr_pair = dynamic_cast<Pair*>(cdr);
+        Atom *cadr = cdr_pair->get_car(), *cddr = cdr_pair->get_cdr();
+        if (cddr == nullptr)
         {
-            return p->get_car()->to_string()
-                   + " " 
-                   + to_string_list_helper(dynamic_cast<Pair *>(p->get_cdr()));
+            return car->to_string() + " " + to_string_list_helper(cdr_pair);
+        }
+        else if (typeid(*cddr) == typeid(Pair))
+        {
+            Pair* cddr_pair = dynamic_cast<Pair*>(cddr);
+            return car->to_string()
+                   + " " + cadr->to_string()
+                   + " " + to_string_list_helper(cddr_pair);
         }
         else
         {
-            return p->get_car()->to_string() + midpoint + p->get_cdr()->to_string();
+            
+            return car->to_string()
+                   + " . (" + cadr->to_string()
+                   + " . "
+                   + cddr->to_string() + ")";
         }
+    }
+    else
+    {
+        return car->to_string() + " . " + cdr->to_string();
     }
 }
 
