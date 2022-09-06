@@ -61,12 +61,12 @@ Atom* read_list(std::stringstream& src)
 
     if (head == nullptr)
     {
-        return nullptr;
+        return new Pair();
     }
 
     if (typeid(*head) == typeid(RightParen))
     {
-        return nullptr;
+        return new Pair();
     }
     else if (typeid(*head) == typeid(Dot))
     {
@@ -97,6 +97,18 @@ Atom* read_list(std::stringstream& src)
     if (typeid(*tail) == typeid(RightParen))
     {
         return new Pair(head);
+    }
+    else if (typeid(*tail) == typeid(Pair))
+    {
+        Pair* tail_pair = dynamic_cast<Pair*>(tail);
+        if(tail_pair->get_cdr() == nullptr)
+        {
+            return new Pair(head, new Pair(tail));
+        }
+        else
+        {
+            return new Pair(head, new Pair(tail));
+        }
     }
     else
     {

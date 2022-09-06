@@ -10,15 +10,6 @@
 
 TEST_SUITE("constructing atoms and lists")
 {
-    TEST_CASE("empty list")
-    {
-        Pair* test = new Pair();
-        CHECK(test->get_car() == nullptr);
-        CHECK(test->get_cdr() == nullptr);
-        CHECK(test->to_string() == "()");
-        delete test;
-    }
-
     TEST_CASE("integer")
     {
         Integer64* test = new Integer64(69);
@@ -48,6 +39,41 @@ TEST_SUITE("constructing atoms and lists")
         Symbol* test = new Symbol("an-atom");
         CHECK(test->value() == "an-atom");
         CHECK(test->to_string() == "an-atom");
+        delete test;
+    }
+
+    TEST_CASE("null list")
+    {
+        Pair* test = new Pair();
+        CHECK(test->to_string() == "()");
+        delete test;
+    }
+
+    TEST_CASE("nested null list")
+    {
+        Pair* test = new Pair(new Pair());
+        CHECK(test->to_string() == "(())");
+        delete test;
+    }
+
+    TEST_CASE("double nested null list")
+    {
+        Pair* test = new Pair(new Pair(new Pair()));
+        CHECK(test->to_string() == "((()))");
+        delete test;
+    }
+
+    TEST_CASE("paired nested null list")
+    {
+        Pair* test = new Pair(new Pair(), new Pair(new Pair()));
+        CHECK(test->to_string() == "(() ())");
+        delete test;
+    }
+
+    TEST_CASE("improper paired nested null list")
+    {
+        Pair* test = new Pair(new Pair(), new Pair());
+        CHECK(test->to_string() == "(())");
         delete test;
     }
 
@@ -167,6 +193,13 @@ TEST_SUITE("constructing atoms and lists")
         delete test;
     }
 
+    TEST_CASE("list of ordered pairs")
+    {
+        Pair* test = new Pair(new Pair(new Symbol("foo"), new Symbol("quux")), new Pair(new Pair(new Symbol("bar"), new Symbol("baz"))));
+        CHECK(test->to_string() == "((foo . quux) (bar . baz))");
+        delete test;
+    }
+
 }
 
 TEST_SUITE("reading s-expressions and converting them to strings")
@@ -221,9 +254,47 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         std::stringstream src;
         src << "()";
         Atom* test = read_expression(src);
-        CHECK(test == nullptr);
+        CHECK(test->to_string() == "()");
         delete test;
     }
+
+
+    TEST_CASE("nested null list")
+    {
+        std::stringstream src;
+        src << "(())";
+        Atom* test = read_expression(src);
+        CHECK(test->to_string() == "(())");
+        delete test;
+    }
+
+    TEST_CASE("double nested null list")
+    {
+        std::stringstream src;
+        src << "((()))";
+        Atom* test = read_expression(src);
+        CHECK(test->to_string() == "((()))");
+        delete test;
+    }
+
+    TEST_CASE("paired nested null list")
+    {
+        std::stringstream src;
+        src << "(() ())";
+        Atom* test = read_expression(src);
+        CHECK(test->to_string() == "(() ())");
+        delete test;
+    }
+
+    TEST_CASE("improper paired nested null list")
+    {
+        std::stringstream src;
+        src << "(() . ())";
+        Atom* test = read_expression(src);
+        CHECK(test->to_string() == "(())");
+        delete test;
+    }
+
 
     TEST_CASE("list of one element")
     {
@@ -303,10 +374,17 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         delete test;
     }
 
-    TEST_CASE("malformed improper list")
+    TEST_CASE("malformed improper list #1")
     {
         std::stringstream src;
         src << "(foo bar . baz quux)";
+        REQUIRE_THROWS(read_expression(src));
+    }
+
+    TEST_CASE("malformed improper list #2")
+    {
+        std::stringstream src;
+        src << "(foo bar . . baz)";
         REQUIRE_THROWS(read_expression(src));
     }
 
@@ -319,6 +397,16 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         CHECK(test->to_string() == "(foo (bar baz))");
         delete test;
     }
+
+    TEST_CASE("list of ordered pairs")
+    {
+        std::stringstream src;
+        src << "((foo . quux) (bar . baz))";
+        Atom* test = read_expression(src);
+        CHECK(test->to_string() == "((foo . quux) (bar . baz))");
+        delete test;
+    }
+
 
     TEST_CASE("binary tree of ordered pairs")
     {

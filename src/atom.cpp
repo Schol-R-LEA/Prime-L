@@ -34,7 +34,7 @@ std::string to_string_list_helper(Pair *p)
         }
         else
         {
-            return "() . " + cdr->to_string();
+            return "() " + cdr->to_string();
         }
     }
     else if (cdr == nullptr)
@@ -47,21 +47,29 @@ std::string to_string_list_helper(Pair *p)
         Atom *cadr = cdr_pair->get_car(), *cddr = cdr_pair->get_cdr();
         if (cddr == nullptr)
         {
-            return car->to_string() + " " + to_string_list_helper(cdr_pair);
+            if (cadr == nullptr)
+            {
+                return car->to_string();
+            }
+            else
+            {
+                return car->to_string() + " " + cadr->to_string();
+            }
         }
         else if (typeid(*cddr) == typeid(Pair))
         {
             if (typeid(*car) == typeid(Pair))
             {
-                return car->to_string()
-                    + " . " + cdr->to_string();
+                return car->to_string() + " . " + cdr->to_string();
             }
             else
             {
                 Pair* cddr_pair = dynamic_cast<Pair*>(cddr);
                 return car->to_string()
                     + " " + cadr->to_string()
-                    + " " + to_string_list_helper(cddr_pair);
+                    + ((cddr_pair->get_car() == nullptr)
+                       ? ""
+                       : " " + to_string_list_helper(cddr_pair));
             }
         }
         else
