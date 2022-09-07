@@ -100,15 +100,7 @@ Atom* read_list(std::stringstream& src)
     }
     else if (typeid(*tail) == typeid(Pair))
     {
-        Pair* tail_pair = dynamic_cast<Pair*>(tail);
-        if(tail_pair->get_cdr() == nullptr)
-        {
-            return new Pair(head, new Pair(tail));
-        }
-        else
-        {
-            return new Pair(head, new Pair(tail));
-        }
+        return new Pair(head, new Pair(tail));
     }
     else
     {

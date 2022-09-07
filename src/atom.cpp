@@ -58,7 +58,7 @@ std::string to_string_list_helper(Pair *p)
         }
         else if (typeid(*cddr) == typeid(Pair))
         {
-            if (typeid(*car) == typeid(Pair))
+            if (typeid(*cadr) == typeid(Pair))
             {
                 return car->to_string() + " . " + cdr->to_string();
             }

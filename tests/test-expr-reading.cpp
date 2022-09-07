@@ -185,6 +185,46 @@ TEST_SUITE("constructing atoms and lists")
         delete test;
     }
 
+
+    TEST_CASE("list of a list and a symbol")
+    {
+        Pair* test = new Pair(new Pair(new Symbol("foo"),
+                                       new Pair(new Symbol("bar"))),
+                              new Pair(new Symbol("baz")));
+        CHECK(typeid(*(test->get_car())) == typeid(Pair));
+        Pair* test_car = dynamic_cast<Pair*>(test->get_car());
+        CHECK(test_car->get_car()->to_string() == "foo");
+        Pair* test_cdar = dynamic_cast<Pair*>(test_car->get_cdr());
+        CHECK(test_cdar->get_car()->to_string() == "bar");
+        CHECK(typeid(*(test->get_cdr())) == typeid(Pair));
+        Pair* test_cdr = dynamic_cast<Pair*>(test->get_cdr());
+        CHECK(test_cdr->get_car()->to_string() == "baz");
+        CHECK(test->to_string() == "((foo bar) baz)");
+        delete test;
+    }
+
+
+    TEST_CASE("list of a list and two symbols")
+    {
+        Pair* test = new Pair(new Pair(new Symbol("foo"),
+                                       new Pair(new Symbol("bar"))),
+                              new Pair(new Symbol("baz"),
+                                       new Pair(new Symbol("quux"))));
+        CHECK(typeid(*(test->get_car())) == typeid(Pair));
+        Pair* test_car = dynamic_cast<Pair*>(test->get_car());
+        CHECK(test_car->get_car()->to_string() == "foo");
+        Pair* test_cdar = dynamic_cast<Pair*>(test_car->get_cdr());
+        CHECK(test_cdar->get_car()->to_string() == "bar");
+        CHECK(typeid(*(test->get_cdr())) == typeid(Pair));
+        Pair* test_cdr = dynamic_cast<Pair*>(test->get_cdr());
+        CHECK(test_cdr->get_car()->to_string() == "baz");
+        Pair* test_cddr = dynamic_cast<Pair*>(test_cdr->get_cdr());
+        CHECK(test_cddr->get_car()->to_string() == "quux");
+        CHECK(test->to_string() == "((foo bar) baz quux)");
+        delete test;
+    }
+
+
     TEST_CASE("binary tree of ordered pairs")
     {
         Pair* test = new Pair(new Pair(new Pair(new Symbol("foo"), new Symbol("quux")), new Pair(new Symbol("bar"), new Symbol("baz"))),
@@ -394,9 +434,60 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         std::stringstream src;
         src << "(foo (bar baz))";
         Atom* test = read_expression(src);
+        Pair* test_pair = dynamic_cast<Pair*>(test);
+        CHECK(typeid(*(test_pair->get_car())) == typeid(Symbol));
+        Symbol* test_car = dynamic_cast<Symbol*>(test_pair->get_car());
+        CHECK(test_car->value() == "foo");
+        CHECK(typeid(*(test_pair->get_cdr())) == typeid(Pair));
+        Pair* test_cdr = dynamic_cast<Pair*>(test_pair->get_cdr());
+        Atom* test_cadr = test_cdr->get_car();
+        CHECK(typeid(*test_cadr) == typeid(Pair));
         CHECK(test->to_string() == "(foo (bar baz))");
         delete test;
     }
+
+
+    TEST_CASE("list of a list and a symbol")
+    {
+        std::stringstream src;
+        src << "((foo bar) baz)";
+        Atom* test = read_expression(src);
+        CHECK(typeid(*test) == typeid(Pair));
+        Pair* test_pair = dynamic_cast<Pair*>(test);
+        CHECK(typeid(*(test_pair->get_car())) == typeid(Pair));
+        Pair* test_car = dynamic_cast<Pair*>(test_pair->get_car());
+        CHECK(test_car->get_car()->to_string() == "foo");
+        Pair* test_cdar = dynamic_cast<Pair*>(test_car->get_cdr());
+        CHECK(test_cdar->get_car()->to_string() == "bar");
+        CHECK(typeid(*(test_pair->get_cdr())) == typeid(Pair));
+        Pair* test_cdr = dynamic_cast<Pair*>(test_pair->get_cdr());
+        CHECK(test_cdr->get_car()->to_string() == "baz");
+        CHECK(test->to_string() == "((foo bar) baz)");
+        delete test;
+    }
+
+
+    TEST_CASE("list of a list and two symbols")
+    {
+        std::stringstream src;
+        src << "((foo bar) baz quux)";
+        Atom* test = read_expression(src);
+        CHECK(typeid(*test) == typeid(Pair));
+        Pair* test_pair = dynamic_cast<Pair*>(test);
+        CHECK(typeid(*(test_pair->get_car())) == typeid(Pair));
+        Pair* test_car = dynamic_cast<Pair*>(test_pair->get_car());
+        CHECK(test_car->get_car()->to_string() == "foo");
+        Pair* test_cdar = dynamic_cast<Pair*>(test_car->get_cdr());
+        CHECK(test_cdar->get_car()->to_string() == "bar");
+        CHECK(typeid(*(test_pair->get_cdr())) == typeid(Pair));
+        Pair* test_cdr = dynamic_cast<Pair*>(test_pair->get_cdr());
+        CHECK(test_cdr->get_car()->to_string() == "baz");
+        Pair* test_cddr = dynamic_cast<Pair*>(test_cdr->get_cdr());
+        CHECK(test_cddr->get_car()->to_string() == "quux");
+        CHECK(test->to_string() == "((foo bar) baz quux)");
+        delete test;
+    }
+
 
     TEST_CASE("list of ordered pairs")
     {
