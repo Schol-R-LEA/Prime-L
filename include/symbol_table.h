@@ -28,8 +28,11 @@ private:
 public:
     SymbolTableNode(Symbol* sym): symbol(sym), left(nullptr), right(nullptr) {};
     ~SymbolTableNode();
+    Symbol* get_symbol() {return symbol; };
     SymbolTableNode* seek(std::string key);
-    SymbolTableNode* insert(Symbol* sym);
+    void insert(Symbol* sym);
+    uint32_t size();
+    std::string to_string();
 };
 
 
@@ -38,7 +41,7 @@ class SymbolTable
 private:
     std::string scope_description;
     SymbolTable *parent;
-    vector<SymbolTable> children;
+    std::vector<SymbolTable> children;
     SymbolTableNode *symbols;
 
 
@@ -49,13 +52,16 @@ public:
     ~SymbolTable();
 
     void insert(Symbol* sym);
+    void new_scope(SymbolTable& child);
     SymbolTableNode* find_local(std::string key);
     SymbolTableNode* find_in_scope(std::string key);
     uint32_t depth();
     uint32_t size();
-    vector<SymbolTable> get_children();
+    uint32_t size_in_scope();
+    std::vector<SymbolTable> get_children();
+    SymbolTableNode* get_symbols();
     std::string get_description();
-    SymbolTable get_parent();
+    SymbolTable* get_parent();
     std::string get_scope();
 
     std::string to_string();

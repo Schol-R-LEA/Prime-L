@@ -33,9 +33,9 @@ SymbolTableNode* SymbolTableNode::seek(std::string key)
         {
             return nullptr;
         }
-        else 
+        else
         {
-            left->seek(key);
+            return left->seek(key);
         }
     }
     else
@@ -44,15 +44,15 @@ SymbolTableNode* SymbolTableNode::seek(std::string key)
         {
             return nullptr;
         }
-        else 
+        else
         {
-            right->seek(key);
+            return right->seek(key);
         }
     }
 }
 
 
-SymbolTableNode* SymbolTableNode::insert(Symbol* sym)
+void SymbolTableNode::insert(Symbol* sym)
 {
     if (sym->to_string() == "")
     {
@@ -67,7 +67,6 @@ SymbolTableNode* SymbolTableNode::insert(Symbol* sym)
         if (left == nullptr)
         {
             left = new SymbolTableNode(sym);
-            return left;
         }
         else
         {
@@ -78,78 +77,177 @@ SymbolTableNode* SymbolTableNode::insert(Symbol* sym)
     {
         if (right == nullptr)
         {
-            return nullptr;
+
+            right = new SymbolTableNode(sym);
         }
         else
         {
-            right->seek(key);
+            right->insert(sym);
         }
     }
 }
 
 
+uint32_t SymbolTableNode::size()
+{
+    return 1 + ((left == nullptr) ? 0 : left->size()) + ((right == nullptr) ? 0 : right->size());
+}
+
+
+std::string SymbolTableNode::to_string()
+{
+    std::string s = "";
+
+    if (left != nullptr)
+    {
+        s += left->to_string() + ", ";
+    }
+    s += symbol->to_string();
+    if (right != nullptr)
+    {
+        s += ", " + right->to_string();
+    }
+
+    return s;
+}
+
 
 SymbolTable::~SymbolTable()
 {
-    delete children;
+    delete symbols;
 }
 
 
 void SymbolTable::insert(Symbol* sym)
 {
-
+    if (symbols == nullptr)
+    {
+        symbols = new SymbolTableNode(sym);
+    }
+    else
+    {
+        symbols->insert(sym);
+    }
 }
+
+
+void SymbolTable::new_scope(SymbolTable& child)
+{
+    child.parent = this;
+    children.push_back(child);
+}
+
 
 
 SymbolTableNode* SymbolTable::find_local(std::string key)
 {
-
+    return symbols->seek(key);
 }
 
 
 SymbolTableNode* SymbolTable::find_in_scope(std::string key)
 {
-
+    SymbolTableNode* node = this->find_local(key);
+    if (node != nullptr)
+    {
+        return node;
+    }
+    else if (parent != nullptr)
+    {
+        return parent->find_in_scope(key);
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 
 uint32_t SymbolTable::depth()
 {
-
+    if (parent == nullptr)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1 + parent->depth();
+    }
 }
 
 
 uint32_t SymbolTable::size()
 {
-
+    return symbols->size();
 }
 
 
-vector<SymbolTable> SymbolTable::get_children()
+uint32_t SymbolTable::size_in_scope()
 {
+    if (parent == nullptr)
+    {
+        return this->size();
+    }
+    else
+    {
+        return this->size() + parent->size_in_scope();
+    }
+}
 
+
+std::vector<SymbolTable> SymbolTable::get_children()
+{
+    return children;
+}
+
+
+SymbolTableNode* SymbolTable::get_symbols()
+{
+    return symbols;
 }
 
 
 std::string SymbolTable::get_description()
 {
-
+    return scope_description;
 }
 
 
-SymbolTable SymbolTable::get_parent()
+SymbolTable* SymbolTable::get_parent()
 {
-
+    return parent;
 }
 
 
 std::string SymbolTable::get_scope()
 {
-    return scope_description;
+    if (parent == nullptr)
+    {
+        return this->get_description();
+    }
+    return parent->get_scope() + "::" + this->get_description();
 }
 
 
 std::string SymbolTable::to_string()
 {
+    std::string s = "";
+    std::string offset = "";
+    if (parent != nullptr)
+    {
+        s += parent->to_string();
+    }
+    for (uint32_t i = 0; i < this->depth(); i++)
+    {
+        offset += "  ";
+    }
 
+    s += offset + scope_description + ":\n";
+
+    if (symbols != nullptr)
+    {
+        s += offset + symbols->to_string() + "\n";
+    }
+
+    return s;
 }
