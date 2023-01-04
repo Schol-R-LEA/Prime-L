@@ -5,19 +5,22 @@
 #include <iostream>
 #include <vector>
 #include "atom.h"
+#include "symbol_table.h"
 
 
 class AbstractSyntaxTree
 {
 private:
     Atom* head;
+    SymbolTable* top_level;
+    Atom* parsed;
+    Atom* parse(Atom* current, SymbolTable* syms);
 
 public:
-    AbstractSyntaxTree();
-    AbstractSyntaxTree(Atom* head);
+    AbstractSyntaxTree(Atom* h);
     ~AbstractSyntaxTree();
 };
 
-AbstractSyntaxTree optimize_asts(std::vector<AbstractSyntaxTree> asts);
+AbstractSyntaxTree optimize_asts(std::vector<AbstractSyntaxTree*> asts);
 
 #endif

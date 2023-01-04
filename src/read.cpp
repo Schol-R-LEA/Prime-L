@@ -44,6 +44,10 @@ Atom* read_expression(std::stringstream& src)
     {
         return new RightParen();
     }
+    else if (ch == '"')
+    {
+        return read_string_literal(src);
+    }
     else if (std::isdigit(ch))
     {
         return read_number(ch, src);
@@ -108,7 +112,10 @@ Atom* read_list(std::stringstream& src)
     }
 }
 
-
+Atom* read_string_literal(std::stringstream& src)
+{
+    
+}
 
 Atom* read_symbol(char start_ch, std::stringstream& src)
 {

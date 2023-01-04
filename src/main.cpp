@@ -26,11 +26,12 @@ int main(int argc, char* argv[])
 
     read_src_file(src, src_file);
 
-    std::vector<AbstractSyntaxTree> asts;
+    std::vector<AbstractSyntaxTree*> asts;
 
     while(src)
     {
-        asts.add(parse(read_expression(src)));
+
+        asts.add(new AbstractSyntaxTree(read_expression(src)));
     }
 
     std::vector<AbstractSyntaxTree> opt_asts = optimize_asts(asts);

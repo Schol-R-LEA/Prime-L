@@ -44,6 +44,16 @@ public:
 };
 
 
+class Comment: public Atom
+{
+private:
+    std::string comment;
+
+public:
+    Comment(std::string c): comment(c) {};
+};
+
+
 class Number: public Atom
 {
 private:
@@ -73,6 +83,18 @@ public:
     double value() {return literal;};
     virtual std::string to_string() {return std::to_string(literal);};
 };
+
+
+class StringLiteral: public Atom
+{
+private:
+    std::string literal;
+public:
+    StringLiteral(std::string s): literal(s) {};
+    std::string value() {return literal;};
+    virtual std::string to_string() {return literal;};
+};
+
 
 
 class Pair: public Atom

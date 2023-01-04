@@ -4,13 +4,12 @@
 #include "abstract_syntax_tree.h"
 #include "atom.h"
 
-AbstractSyntaxTree::AbstractSyntaxTree(): head(nulltpr)
-{
-}
 
-
-AbstractSyntaxTree::AbstractSyntaxTree(Atom* h): head(h)
+AbstractSyntaxTree::AbstractSyntaxTree(Atom* h): head(h), parsed(nullptr), top_level(nullptr)
 {
+    top_level = new SymbolTable("<top-level>");
+
+    parsed = parse(head, top_level);
 }
 
 AbstractSyntaxTree::~AbstractSyntaxTree()
@@ -19,9 +18,15 @@ AbstractSyntaxTree::~AbstractSyntaxTree()
     {
         delete head;
     }
+    delete top_level;
 }
 
-AbstractSyntaxTree optimize_asts(std::vector<AbstractSyntaxTree> asts)
+SymbolTable* AbstractSyntaxTree::parse(Atom* source, SymbolTable* syms)
+{
+    
+}
+
+AbstractSyntaxTree optimize_asts(std::vector<AbstractSyntaxTree*> asts)
 {
     return asts;
 }

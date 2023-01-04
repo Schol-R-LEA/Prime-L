@@ -33,6 +33,7 @@ void read_src_file(std::stringstream& src, std::ifstream& src_file);
 
 Atom* read_expression(std::stringstream& src);
 Atom* read_list(std::stringstream& src);
+Atom* read_string_literal(std::stringstream& src);
 Atom* read_number(char start_ch, std::stringstream& src);
 Atom* read_symbol(char start_ch, std::stringstream& src);
 

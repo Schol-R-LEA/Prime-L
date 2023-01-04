@@ -507,4 +507,11 @@ TEST_SUITE("reading s-expressions and converting them to strings")
         CHECK(test->to_string() == "(((foo . quux) . (bar . baz)) . ((1 . 2) . (3 . 4)))");
         delete test;
     }
+
+    TEST_CASE("incomplete list - one item and dangling right paren")
+    {
+        std::stringstream src;
+        src << "(foo";
+        REQUIRE_THROWS(read_expression(src));
+    }
 }
